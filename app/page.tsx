@@ -9,13 +9,21 @@ import { useRef } from 'react'
 const Completionist = () => <span>You are good to go!</span>
 
 // Renderer callback with condition
-const renderer = ({ minutes, seconds, completed }) => {
+const renderer = ({
+  minutes,
+  seconds,
+  completed,
+}: {
+  minutes: number
+  seconds: number
+  completed: boolean
+}) => {
   if (completed) {
     // Render a complete state
     return <Completionist />
   } else {
     // Render a countdown with format 00:00
-    const formatNumber = (num) => num.toString().padStart(2, '0')
+    const formatNumber = (num: number) => num.toString().padStart(2, '0')
     return (
       <span>
         {formatNumber(minutes)}:{formatNumber(seconds)}
@@ -25,7 +33,7 @@ const renderer = ({ minutes, seconds, completed }) => {
 }
 
 export default function Home() {
-  const countdownRef = useRef(null)
+  const countdownRef = useRef<Countdown | null>(null)
 
   const handleStartClick = () => {
     if (countdownRef.current) {
