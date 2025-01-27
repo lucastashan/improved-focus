@@ -2,7 +2,7 @@
 
 import { Button, Container } from '@/components'
 import { minutesToMiliseconds } from '@/utils'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -34,7 +34,8 @@ const TimerSetting = ({
   </li>
 )
 
-export default function Settings() {
+// This function is to wrap the useSearchParams() call (https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout)
+function SettingsSuspense() {
   // Get the timer values from the URL query params
   const params = useSearchParams()
 
@@ -85,5 +86,13 @@ export default function Settings() {
         <Button label="Save" style="bg-gray-800 h-10 px-5 hover:bg-gray-900" />
       </Link>
     </Container>
+  )
+}
+
+export default function Settings() {
+  return (
+    <Suspense>
+      <SettingsSuspense />
+    </Suspense>
   )
 }

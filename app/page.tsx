@@ -4,8 +4,8 @@ import Image from 'next/image'
 import { Button, Container } from '@/components'
 import { milisecondsToMinutes } from '@/utils'
 import Countdown from 'react-countdown'
-import { useRef, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 // Random component
@@ -35,9 +35,8 @@ const renderer = ({
   }
 }
 
-export default function Home() {
-  const router = useRouter()
-
+// This function is to wrap the useSearchParams() call (https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout)
+function HomeSuspense() {
   // Get the timer values from the URL query params or set default values (25, 5 and 15 minutes, respectively)
   const params = useSearchParams()
   const focusTimer = Number(params.get('focusTimer')) || 1500000
@@ -114,12 +113,7 @@ export default function Home() {
         }}
         className="col-start-3 row-start-1 mr-3 mt-3 justify-self-end"
       >
-        <Button
-          svg={
-            <Image alt="test" src="/adjustments.svg" width={24} height={24} />
-          }
-          onClick={() => router.push('/settings')}
-        />
+        <Image alt="test" src="/adjustments.svg" width={24} height={24} />
       </Link>
       {leftArrow && (
         <div className="col-start-1 row-start-2 ml-3 self-center justify-self-start">
@@ -173,5 +167,13 @@ export default function Home() {
         />
       </div>
     </Container>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <HomeSuspense />
+    </Suspense>
   )
 }
