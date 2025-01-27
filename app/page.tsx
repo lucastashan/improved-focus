@@ -38,11 +38,26 @@ export default function Home() {
   const [countdownTimer, setCountdownTimer] = useState(Date.now() + 1500000)
   const [rightArrow, setRightArrow] = useState(true)
   const [leftArrow, setLeftArrow] = useState(false)
+  const [startButton, setStartButton] = useState(true)
+
+  function countdownAction(action: string) {
+    if (countdownRef.current) {
+      if (action === 'start') {
+        countdownRef.current.start()
+      } else {
+        countdownRef.current.pause()
+      }
+    }
+  }
 
   const handleStartClick = () => {
-    if (countdownRef.current) {
-      countdownRef.current.start()
-    }
+    countdownAction('start')
+    setStartButton(false)
+  }
+
+  const handlePauseClick = () => {
+    countdownAction('pause')
+    setStartButton(true)
   }
 
   const handleClickToFocusCycle = () => {
@@ -50,9 +65,8 @@ export default function Home() {
     setCountdownTimer(Date.now() + 1500000)
     setRightArrow(true)
     setLeftArrow(false)
-    if (countdownRef.current) {
-      countdownRef.current.stop()
-    }
+    countdownAction('pause')
+    setStartButton(true)
   }
 
   const handleClickToShortRest = () => {
@@ -60,12 +74,16 @@ export default function Home() {
     setCountdownTimer(Date.now() + 300000)
     setRightArrow(true)
     setLeftArrow(true)
+    countdownAction('pause')
+    setStartButton(true)
   }
 
   const handleClickToLongRestCycle = () => {
     setTitle('Long Rest Cycle')
     setCountdownTimer(Date.now() + 900000) // 15 minutes
     setRightArrow(false)
+    countdownAction('pause')
+    setStartButton(true)
   }
 
   return (
@@ -128,9 +146,9 @@ export default function Home() {
         )}
         <div className="col-start-2 row-start-3 mb-3 self-end justify-self-center">
           <Button
-            label="Start"
+            label={startButton ? 'Start' : 'Pause'}
             style="bg-gray-800 h-10 px-5 hover:bg-gray-900"
-            onClick={handleStartClick}
+            onClick={startButton ? handleStartClick : handlePauseClick}
           />
         </div>
       </div>
