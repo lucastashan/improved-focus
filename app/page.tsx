@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { Button, Container } from '@/components'
-import { milisecondsToMinutes } from '@/utils'
+import { milisecondsToMinutes } from '@/lib'
 import Countdown from 'react-countdown'
 import { Suspense, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
