@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, Container } from '@/components'
-import { minutesToMiliseconds } from '@/utils'
+import { minutesToMiliseconds } from '@/lib'
 import { Suspense, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
