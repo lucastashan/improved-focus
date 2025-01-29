@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { Button, Container } from '@/components'
-import { milisecondsToMinutes } from '@/lib'
+import { milisecondsToMinutes, withAuth } from '@/lib'
 import Countdown from 'react-countdown'
 import { Suspense, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
@@ -170,10 +170,12 @@ function HomeSuspense() {
   )
 }
 
-export default function Home() {
+function Home() {
   return (
     <Suspense>
       <HomeSuspense />
     </Suspense>
   )
 }
+
+export default withAuth(Home)

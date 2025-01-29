@@ -1,42 +1,63 @@
 'use client'
 
 import { Container, Input, Button } from '@/components'
-import { createClient } from '@supabase/supabase-js'
-// import Link from 'next/link'
+import Link from 'next/link'
 import { useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseKey)
-
-export function Login() {
+export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    if (error) {
-      console.error('Error logging in:', error)
+    setError(false)
+    const supabase = createClient()
+    if (mode === 'signin') {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (error) {
+        console.error('Error logging in:', error)
+      } else {
+        console.log(data)
+        window.location.href = '/'
+      }
     } else {
-      console.log(data)
-      window.location.href = '/'
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+      if (error) {
+        setError(true)
+      } else {
+        console.log(data)
+        window.location.href = '/'
+      }
     }
   }
 
   return (
-    <Container>
-      <div className="col-start-2 row-start-1 text-center text-2xl">
+    <Container hasCols={false}>
+      <div className="row-start-1 text-center text-2xl">
         <h1 className="mt-3 text-black">Improve your focus!</h1>
         <small className="text-gray-800">
-          sign in to continue to your account
+          {mode === 'signin'
+            ? 'sign in to continue to your account'
+            : 'Get started with your new account'}
         </small>
+        <div>
+          <small>
+            {mode === 'signup' && error
+              ? 'Invalid e-mail, please try again'
+              : ''}
+          </small>
+        </div>
       </div>
       <form
-        className="col-start-2 row-start-2 justify-items-center space-y-3"
+        className="row-start-2 justify-items-center space-y-3 px-2"
         onSubmit={handleSubmit}
       >
         <Input
@@ -56,19 +77,19 @@ export function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <Button
-          label="Login"
+          label={mode === 'signin' ? 'Login' : 'Create'}
           style="bg-gray-800 h-12 px-5 hover:bg-gray-900"
           type="submit"
         />
         <div>
           <small>
             New to our platform?{' '}
-            <a className="text-blue-600 hover:text-blue-500">
-              Create an account
-            </a>
-            {/* <Link href={'/'} className="text-blue-600 hover:text-blue-500">
-              Create an account
-            </Link> */}
+            <Link
+              href={mode === 'signin' ? '/sign-up' : '/sign-in'}
+              className="text-blue-600 hover:text-blue-500"
+            >
+              {mode === 'signin' ? 'Create an account' : 'Sign in'}
+            </Link>
           </small>
         </div>
       </form>
