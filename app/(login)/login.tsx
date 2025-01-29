@@ -1,20 +1,19 @@
 'use client'
 
 import { Container, Input, Button } from '@/components'
-import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 import { useState } from 'react'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseKey)
+import { createClient } from '@/lib/supabase/client'
 
 export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setError(false)
+    const supabase = createClient()
     if (mode === 'signin') {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -32,7 +31,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
         password,
       })
       if (error) {
-        console.error('Error signing up:', error)
+        setError(true)
       } else {
         console.log(data)
         window.location.href = '/'
@@ -41,17 +40,24 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   }
 
   return (
-    <Container>
-      <div className="col-start-2 row-start-1 text-center text-2xl">
+    <Container hasCols={false}>
+      <div className="row-start-1 text-center text-2xl">
         <h1 className="mt-3 text-black">Improve your focus!</h1>
         <small className="text-gray-800">
           {mode === 'signin'
             ? 'sign in to continue to your account'
             : 'Get started with your new account'}
         </small>
+        <div>
+          <small>
+            {mode === 'signup' && error
+              ? 'Invalid e-mail, please try again'
+              : ''}
+          </small>
+        </div>
       </div>
       <form
-        className="col-start-2 row-start-2 justify-items-center space-y-3"
+        className="row-start-2 justify-items-center space-y-3 px-2"
         onSubmit={handleSubmit}
       >
         <Input

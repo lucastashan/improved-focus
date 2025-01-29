@@ -18,7 +18,7 @@ const TimerSetting = ({
   onIncrease: () => void
   onDecrease: () => void
 }) => (
-  <li className="justify-self-start text-lg">
+  <li className="justify-self-center text-lg">
     {label}
     <Button
       svg={<Image alt="plus icon" src="/plus.svg" width={18} height={18} />}
@@ -48,11 +48,11 @@ function SettingsSuspense() {
   )
 
   return (
-    <Container>
-      <h1 className="col-start-2 row-start-1 mb-4 text-center text-2xl text-white">
+    <Container hasCols={false}>
+      <h1 className="row-start-1 mb-4 text-center text-2xl text-white">
         Edit Timers
       </h1>
-      <ul className="col-start-2 row-start-2 list-disc space-y-2 pl-5 text-center">
+      <ul className="row-start-2 list-disc space-y-2 pl-5 text-center">
         <TimerSetting
           label="Focus Cycle:"
           timer={focusTimer}
@@ -81,7 +81,7 @@ function SettingsSuspense() {
             longRestTimer: minutesToMiliseconds(longRestTimer),
           },
         }}
-        className="col-start-2 row-start-3 mb-3 self-end justify-self-center"
+        className="row-start-3 mb-3 self-end justify-self-center"
       >
         <Button label="Save" style="bg-gray-800 h-10 px-5 hover:bg-gray-900" />
       </Link>
