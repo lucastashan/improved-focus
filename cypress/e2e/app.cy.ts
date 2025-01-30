@@ -29,3 +29,51 @@ describe('Sign-up', () => {
     cy.url().should('include', '/')
   })
 })
+
+describe('Login', () => {
+  it('should log in and navigate to home screen', () => {
+    cy.fixture('response.json').then((response) => {
+      cy.intercept('POST', '**/token?grant_type=password', response).as('login')
+    })
+
+    cy.visit('/')
+    cy.get('input[name="email"]').type('user@email.com')
+    cy.get('input[name="password"]').type('password')
+    cy.get('button').click()
+    cy.wait('@login')
+
+    cy.get('h1').contains('Focus Cycle')
+  })
+})
+
+describe('Configure Timer', () => {
+  it('should log in and configure a Focus, Short Rest, and Long Rest timer', () => {
+    cy.fixture('response.json').then((response) => {
+      cy.intercept('POST', '**/token?grant_type=password', response).as('login')
+    })
+    cy.visit('/')
+    cy.get('button').click()
+    cy.wait('@login')
+
+    cy.get('img[alt="settings"]').click()
+    cy.url().should('include', '/settings')
+
+    cy.get('img[alt="plus icon"]').eq(0).click()
+    cy.get('img[alt="minus icon"]').eq(1).click()
+    cy.get('img[alt="plus icon"]').eq(2).click()
+    cy.get('button').contains('Save').click()
+
+    cy.url().should(
+      'eq',
+      Cypress.config().baseUrl +
+        '/?focusTimer=1560000&shortRestTimer=240000&longRestTimer=960000',
+    )
+    cy.get('span').should('contain', '26:00')
+
+    cy.get('img[alt="arrow-right"]').click()
+    cy.get('span').should('contain', '04:00')
+
+    cy.get('img[alt="arrow-right"]').click()
+    cy.get('span').should('contain', '16:00')
+  })
+})

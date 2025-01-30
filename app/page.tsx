@@ -113,7 +113,7 @@ function HomeSuspense() {
         }}
         className="col-start-3 row-start-1 mr-3 mt-3 justify-self-end"
       >
-        <Image alt="test" src="/adjustments.svg" width={24} height={24} />
+        <Image alt="settings" src="/adjustments.svg" width={24} height={24} />
       </Link>
       {leftArrow && (
         <div className="col-start-1 row-start-2 ml-3 self-center justify-self-start">
@@ -146,7 +146,7 @@ function HomeSuspense() {
           <Button
             svg={
               <Image
-                alt="arrow-rigth"
+                alt="arrow-right"
                 src="/chevron-right.svg"
                 width={24}
                 height={24}
