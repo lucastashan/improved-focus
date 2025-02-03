@@ -3,6 +3,7 @@
 import { Button, Container, Input } from '@/components'
 import { useState } from 'react'
 import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
 
 interface Distraction {
   id: number
@@ -23,22 +24,30 @@ export default function CycleCompleted() {
     }
   }
 
-  // const handleSubmitDistractions = async () => {
-  //   try {
-  //     const response = await fetch('/api/distractions', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ distractions }),
-  //     })
-  //     if (!response.ok) {
-  //       console.error('Submission failed.')
-  //     } else {
-  //       console.log('Distractions submitted successfully!')
-  //     }
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
+  const handleSubmitDistractions = async () => {
+    const supabase = createClient()
+    try {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser()
+      if (error || !user) {
+        console.error('Error getting user:', error)
+      } else {
+        await fetch('/api/distractions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user.id,
+            distractions: distractions.map((item) => item.text),
+          }),
+        })
+        window.location.href = '/'
+      }
+    } catch (error) {
+      console.error('Error submiting distractions: ', error)
+    }
+  }
 
   return (
     <Container hasCols={false}>
@@ -48,7 +57,7 @@ export default function CycleCompleted() {
 
       <div className="row-start-2 justify-items-center space-y-3 px-2">
         <h2 className="mr-52 text-black">Distractions:</h2>
-        <ul className="space-y-2">
+        <ul className="max-h-24 space-y-2 overflow-y-auto">
           {distractions.map((distraction) => (
             <li key={distraction.id} className="flex justify-between">
               <span className="mr-48">{distraction.text}</span>
@@ -88,7 +97,7 @@ export default function CycleCompleted() {
         <Button
           label="Submit"
           style="bg-black px-4 py-2 text-white hover:bg-gray-900"
-          onClick={() => alert('Cycle completed!')}
+          onClick={handleSubmitDistractions}
         />
       </div>
     </Container>
