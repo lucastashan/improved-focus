@@ -8,33 +8,6 @@ import { Suspense, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-// Random component
-const Completionist = () => <span>You are good to go!</span>
-
-// Renderer callback with condition
-const renderer = ({
-  minutes,
-  seconds,
-  completed,
-}: {
-  minutes: number
-  seconds: number
-  completed: boolean
-}) => {
-  if (completed) {
-    // Render a complete state
-    return <Completionist />
-  } else {
-    // Render a countdown with format 00:00
-    const formatNumber = (num: number) => num.toString().padStart(2, '0')
-    return (
-      <span>
-        {formatNumber(minutes)}:{formatNumber(seconds)}
-      </span>
-    )
-  }
-}
-
 // This function is to wrap the useSearchParams() call (https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout)
 function HomeSuspense() {
   // Get the timer values from the URL query params or set default values (25, 5 and 15 minutes, respectively)
@@ -137,7 +110,22 @@ function HomeSuspense() {
         <Countdown
           ref={countdownRef}
           date={countdownTimer}
-          renderer={renderer}
+          onComplete={() => {
+            if (title === 'Short Rest Cycle' || title === 'Long Rest Cycle') {
+              handleClickToFocusCycle()
+            } else {
+              window.location.href = '/cycle-completed'
+            }
+          }}
+          renderer={({ minutes, seconds }) => {
+            const formatNumber = (num: number) =>
+              num.toString().padStart(2, '0')
+            return (
+              <span>
+                {formatNumber(minutes)}:{formatNumber(seconds)}
+              </span>
+            )
+          }}
           autoStart={false}
         />
       </div>
