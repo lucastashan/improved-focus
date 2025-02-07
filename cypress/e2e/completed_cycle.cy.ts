@@ -18,7 +18,17 @@ describe('Completed cycle', () => {
     cy.get('input').type('Distraction 2')
     cy.contains('Add').click()
 
-    cy.intercept('GET', '**/auth/v1/user').as('submit')
+    cy.intercept('**/auth/v1/user', {
+      statusCode: 200,
+      body: {
+        user: {
+          id: 'mock-user-id',
+        },
+      },
+    }).as('submit')
     cy.contains('Submit').click()
+    cy.wait('@submit')
+
+    cy.url().should('eq', 'http://localhost:3000/')
   })
 })
