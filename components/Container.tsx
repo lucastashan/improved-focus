@@ -1,14 +1,31 @@
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 interface ContainerProps {
   children: ReactNode
   hasCols?: boolean
 }
 
+interface HistoryItens {
+  id: number
+  name: string
+  times: number
+}
+
 export default function Container({
   children,
   hasCols = true,
 }: ContainerProps) {
+  const [history, setHistory] = useState<HistoryItens[]>([])
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      const res = await fetch('http://localhost:3001/history')
+      setHistory(await res.json())
+    }
+
+    fetchHistory()
+  }, [])
+
   return (
     <div className="flex min-h-screen flex-col justify-center">
       <div
@@ -21,9 +38,11 @@ export default function Container({
           Distraction history:
         </h1>
         <ul className="ml-[8%] space-y-1">
-          <li>Distraction 1 (Times: 3)</li>
-          <li>Distraction 2</li>
-          <li>Distraction 3</li>
+          {history?.map((item) => (
+            <li key={item.id}>
+              {item.name} (x{item.times.toString()})
+            </li>
+          ))}
         </ul>
       </div>
     </div>
