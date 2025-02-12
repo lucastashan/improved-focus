@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/client'
+import { DistractionsDTO } from '@/types/DTOs'
 
-interface distractionsDTO {
-  id: string
-  user_id: string
-  content: string
+interface Distractions extends DistractionsDTO {
+  count: number
+}
+
+function transformDistraction(dto: DistractionsDTO): Distractions {
+  return {
+    ...dto,
+    count: 1,
+  }
 }
 
 export async function GET() {
@@ -16,9 +22,25 @@ export async function GET() {
     .eq('user_id', userId)
 
   if (error) console.log(error)
-  const distractions = data as distractionsDTO[]
-  console.log(distractions)
-  return NextResponse.json({ message: 'Distractions fetched' }, { status: 200 })
+
+  const distractions = data as DistractionsDTO[]
+  const distractionsSet: Distractions[] = []
+  const aux: string[] = []
+  distractions.forEach((distraction) => {
+    if (aux.includes(distraction.content)) {
+      for (const x of distractionsSet) {
+        if (x.content === distraction.content) {
+          x.count += 1
+        }
+      }
+    } else {
+      const distractionSet = transformDistraction(distraction)
+      distractionsSet.push(distractionSet)
+      aux.push(distraction.content)
+    }
+  })
+
+  return NextResponse.json(distractionsSet, { status: 200 })
 }
 
 export async function POST(req: NextRequest) {

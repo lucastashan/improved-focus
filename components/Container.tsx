@@ -1,14 +1,13 @@
 import { ReactNode, useEffect, useState } from 'react'
+import { DistractionsDTO } from '@/types/DTOs'
 
 interface ContainerProps {
   children: ReactNode
   hasCols?: boolean
 }
 
-interface HistoryItens {
-  id: number
-  name: string
-  times: number
+interface HistoryItens extends DistractionsDTO {
+  count: number
 }
 
 export default function Container({
@@ -19,8 +18,13 @@ export default function Container({
 
   useEffect(() => {
     const fetchHistory = async () => {
-      const res = await fetch('http://localhost:3001/history')
-      setHistory(await res.json())
+      const res = await fetch('/api/distractions', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      const data = await res.json()
+      const distraction = data as HistoryItens[]
+      setHistory(distraction)
     }
 
     fetchHistory()
@@ -40,7 +44,7 @@ export default function Container({
         <ul className="ml-[8%] space-y-1">
           {history?.map((item) => (
             <li key={item.id}>
-              {item.name} (x{item.times.toString()})
+              {item.content} (x{item.count.toString()})
             </li>
           ))}
         </ul>
