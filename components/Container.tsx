@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react'
 import { DistractionsDTO } from '@/types/DTOs'
+import { createClient } from '@/lib'
 
 interface ContainerProps {
   children: ReactNode
@@ -18,9 +19,19 @@ export default function Container({
 
   useEffect(() => {
     const fetchHistory = async () => {
+      const supabase = createClient()
+
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser()
+      if (error || !user) {
+        console.error('Error getting user:', error)
+        return
+      }
       const res = await fetch('/api/distractions', {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', userId: `${user.id}` },
       })
       const data = await res.json()
       const distraction = data as HistoryItens[]
@@ -41,7 +52,7 @@ export default function Container({
         <h1 className="mx-[5%] mb-2 whitespace-nowrap border-b">
           Distraction history:
         </h1>
-        <ul className="ml-[8%] space-y-1">
+        <ul className="ml-[8%] max-h-48 space-y-1 overflow-y-auto">
           {history?.map((item) => (
             <li key={item.id}>
               {item.content} (x{item.count.toString()})

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/client'
 import { DistractionsDTO } from '@/types/DTOs'
 
@@ -14,8 +15,11 @@ function transformDistraction(dto: DistractionsDTO): Distractions {
 }
 
 export async function GET() {
+  const headersList = headers()
+  const userId = (await headersList).get('userId')
+
   const supabase = createClient()
-  const userId = 'aea5f42f-d6e4-4cec-b0a0-4b73ce9a8bce'
+
   const { data, error } = await supabase
     .from('distractions')
     .select('id, user_id, content')
@@ -40,7 +44,13 @@ export async function GET() {
     }
   })
 
-  return NextResponse.json(distractionsSet, { status: 200 })
+  const sortedDistractionsSet: Distractions[] = distractionsSet.sort((a, b) => {
+    if (a.count > b.count) return -1
+    if (a.count < b.count) return 1
+    return 0
+  })
+
+  return NextResponse.json(sortedDistractionsSet, { status: 200 })
 }
 
 export async function POST(req: NextRequest) {
