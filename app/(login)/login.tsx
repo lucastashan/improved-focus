@@ -40,7 +40,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   }
 
   return (
-    <Container hasCols={false}>
+    <Container hasCols={false} hasHistoryList={false}>
       <div className="row-start-1 text-center text-2xl">
         <h1 className="mt-3 text-black">Improve your focus!</h1>
         <small className="text-gray-800">
