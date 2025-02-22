@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { Button, Container } from '@/components'
-import { milisecondsToMinutes, withAuth } from '@/lib'
+import { milisecondsToMinutes, withAuth, signOut } from '@/lib'
 import Countdown from 'react-countdown'
 import { Suspense, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
@@ -72,6 +72,16 @@ function HomeSuspense() {
 
   return (
     <Container hasHistoryList={true}>
+      <div className="col-start-1 row-start-1 ml-3 mt-3">
+        <Button
+          svg={
+            <Image alt="sign-out" src="/sign-out.svg" width={24} height={24} />
+          }
+          onClick={() => {
+            signOut()
+          }}
+        />
+      </div>
       <h1 className="col-start-2 row-start-1 mb-4 text-center text-2xl text-white">
         {title}
       </h1>
