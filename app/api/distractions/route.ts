@@ -25,7 +25,7 @@ export async function GET() {
     .select('id, user_id, content')
     .eq('user_id', userId)
 
-  if (error) console.log(error)
+  if (error) console.error(error)
 
   const distractions = data as DistractionsDTO[]
   const distractionsSet: Distractions[] = []

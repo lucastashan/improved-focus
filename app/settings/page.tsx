@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, Container } from '@/components'
-import { minutesToMiliseconds } from '@/lib'
+import { minutesToMiliseconds, withAuth } from '@/lib'
 import { Suspense, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -89,10 +89,12 @@ function SettingsSuspense() {
   )
 }
 
-export default function Settings() {
+function Settings() {
   return (
     <Suspense>
       <SettingsSuspense />
     </Suspense>
   )
 }
+
+export default withAuth(Settings)

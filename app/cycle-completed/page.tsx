@@ -1,18 +1,29 @@
 'use client'
 
-import { Button, Container, Input } from '@/components'
-import { useState } from 'react'
 import Image from 'next/image'
-import { createClient } from '@/lib/supabase/client'
+import { useEffect, useState } from 'react'
+import { Button, Container, Input } from '@/components'
+import { withAuth, createClient } from '@/lib'
 
 interface Distraction {
   id: number
   text: string
 }
 
-export default function CycleCompleted() {
+function CycleCompleted() {
   const [distractions, setDistractions] = useState<Distraction[]>([])
   const [newDistraction, setNewDistraction] = useState('')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const canAccess = localStorage.getItem('canAccessCycleCompleted')
+    if (!canAccess) {
+      window.location.href = '/'
+    }
+  }, [])
+
+  if (!mounted) return null
 
   const handleAddDistraction = () => {
     if (newDistraction.trim()) {
@@ -42,6 +53,7 @@ export default function CycleCompleted() {
             distractions: distractions.map((item) => item.text),
           }),
         })
+        localStorage.removeItem('canAccessCycleCompleted')
         window.location.href = '/'
       }
     } catch (error) {
@@ -103,3 +115,5 @@ export default function CycleCompleted() {
     </Container>
   )
 }
+
+export default withAuth(CycleCompleted)

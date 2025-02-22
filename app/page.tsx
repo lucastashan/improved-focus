@@ -1,12 +1,12 @@
 'use client'
 
+import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
+import Link from 'next/link'
+import { Suspense, useRef, useState } from 'react'
+import Countdown from 'react-countdown'
 import { Button, Container } from '@/components'
 import { milisecondsToMinutes, withAuth, signOut } from '@/lib'
-import Countdown from 'react-countdown'
-import { Suspense, useRef, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
-import Link from 'next/link'
 
 // This function is to wrap the useSearchParams() call (https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout)
 function HomeSuspense() {
@@ -55,7 +55,6 @@ function HomeSuspense() {
   const handleClickToShortRest = () => {
     setTitle('Short Rest Cycle')
     setCountdownTimer(Date.now() + shortRestTimer)
-    console.log(shortRestTimer)
     setRightArrow(true)
     setLeftArrow(true)
     countdownAction('pause')
@@ -124,6 +123,7 @@ function HomeSuspense() {
             if (title === 'Short Rest Cycle' || title === 'Long Rest Cycle') {
               handleClickToFocusCycle()
             } else {
+              localStorage.setItem('canAccessCycleCompleted', 'true')
               window.location.href = '/cycle-completed'
             }
           }}

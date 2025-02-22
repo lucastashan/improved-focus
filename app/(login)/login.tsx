@@ -15,25 +15,23 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
     setError(false)
     const supabase = createClient()
     if (mode === 'signin') {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
       if (error) {
         console.error('Error logging in:', error)
       } else {
-        console.log(data)
         window.location.href = '/'
       }
     } else {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
       })
       if (error) {
         setError(true)
       } else {
-        console.log(data)
         window.location.href = '/'
       }
     }
