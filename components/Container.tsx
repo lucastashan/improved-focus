@@ -15,7 +15,7 @@ interface HistoryItens extends DistractionsDTO {
 export default function Container({
   children,
   hasCols = true,
-  hasHistoryList = true,
+  hasHistoryList = false,
 }: ContainerProps) {
   const [history, setHistory] = useState<HistoryItens[]>([])
   const [error, setError] = useState(false)
