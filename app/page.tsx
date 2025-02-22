@@ -71,7 +71,7 @@ function HomeSuspense() {
   }
 
   return (
-    <Container>
+    <Container hasHistoryList={true}>
       <h1 className="col-start-2 row-start-1 mb-4 text-center text-2xl text-white">
         {title}
       </h1>
