@@ -8,19 +8,23 @@ import { createClient } from '@/lib/supabase/client'
 export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setError(false)
+    setError('')
     const supabase = createClient()
     if (mode === 'signin') {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
-      if (error) {
-        console.error('Error logging in:', error)
+      if (error?.status === 400) {
+        setError('Unable to find your account, please create one')
+        setEmail('')
+        setPassword('')
+      } else if (error) {
+        setError('An unexpected error occurred, please try again')
       } else {
         window.location.href = '/'
       }
@@ -29,8 +33,12 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
         email,
         password,
       })
-      if (error) {
-        setError(true)
+      if (error?.status === 442) {
+        setError('Invalid e-mail, please try again')
+        setEmail('')
+        setPassword('')
+      } else if (error) {
+        setError('An unexpected error occurred, please try again')
       } else {
         window.location.href = '/'
       }
@@ -48,9 +56,11 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
         </small>
         <div>
           <small>
-            {mode === 'signup' && error
-              ? 'Invalid e-mail, please try again'
-              : ''}
+            {mode === 'signin' && error
+              ? error
+              : mode === 'signup' && error
+                ? error
+                : ''}
           </small>
         </div>
       </div>
@@ -65,6 +75,9 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
           placeholder="name@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onFocus={() => {
+            if (error) setError('')
+          }}
         />
         <Input
           className="h-12 rounded-lg border-gray-200 bg-white px-4 shadow-sm transition-colors"
