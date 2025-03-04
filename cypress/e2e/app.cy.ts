@@ -77,3 +77,16 @@ describe('Configure Timer', () => {
     cy.get('span').should('contain', '16:00')
   })
 })
+
+describe('Check distraction list', () => {
+  it('should sign in and check the distraction list itens', () => {
+    cy.visit('/')
+    cy.get('input[name="email"]').type('test_user@email.com')
+    cy.get('input[name="password"]').type('pass123')
+    cy.get('button').click()
+
+    cy.get('ul>li').should('have.length', 2)
+    cy.get('ul>li').eq(0).should('contain', 'cellphone (x1)')
+    cy.get('ul>li').eq(1).should('contain', 'tv (x1)')
+  })
+})
